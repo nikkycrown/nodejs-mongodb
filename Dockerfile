@@ -10,7 +10,7 @@ RUN apt install nodejs -y
 RUN npm install -g pm2
 
 # SET ENVIRONMENT VARIABLES TO CONNECT MONGODB
-ENV MONGO_HOST=mongodb \
+ENV MONGO_HOST=localhost \
     MONGO_DB=firstmongo
 
 # SET WORKING DIRECTORY
@@ -32,4 +32,4 @@ COPY default.conf /etc/nginx/conf.d
 EXPOSE 80
 
 # START NGINX AND PM2 WITH A NAME FLAG
-CMD service nginx start && pm2 start script.js --name backend-app
+CMD service nginx start && pm2-runtime start script.js --name backend-app
