@@ -24,12 +24,12 @@ RUN yarn
 # COPY FILES TO WORKING DIRECTORY
 COPY . /home/app
 
-# COPY THE DEFAULT CONFIGURATION FILE
+# COPY THE DEFAULT CONFIGURATION FILE FROM WORKING DIRECTORY
 RUN rm /etc/nginx/conf.d/default.conf
 COPY default.conf /etc/nginx/conf.d
 
 # EXPOSE TO PORT 80
 EXPOSE 80
 
-# START NGINX AND PM2
-CMD service nginx start && Pm2 start script.js
+# START NGINX AND PM2 WITH A NAME FLAG
+CMD service nginx start && pm2 start script.js --name backend-app
