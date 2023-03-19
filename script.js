@@ -9,7 +9,8 @@ const Todo = require('./models/todo')
 mongoose
   .connect(
     'mongodb://mongo:27017/firstmongo',
-    { useNewUrlParser: true, })
+    { useNewUrlParser: true,
+  })
   .then(() => console.log('mongoDB connected'))
   .catch((err) => console.log(err))
   
