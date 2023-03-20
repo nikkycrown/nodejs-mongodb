@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Terraform init
           command: |
-            cd infra_prov_with_terraform
+            cd terraform_setup
             terraform init -input=false
       - persist_to_workspace:
           root: .
