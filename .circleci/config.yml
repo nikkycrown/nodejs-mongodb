@@ -114,7 +114,7 @@ jobs:
       - run:
           name: Build Docker image
           command: | 
-            docker build -t django_project-app .
+            docker build -t nodejs_mongodb_app .
       - run:
           name: Push to Docker Hub
           command: |
