@@ -12,9 +12,9 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            
-jobs:
 
+jobs:
+ 
   terraform-init:
     working_directory: /tmp/project
     docker:
@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Terraform init
           command: |
-            cd terraform
+            cd infra_prov_with_terraform
             terraform init -input=false
       - persist_to_workspace:
           root: .
@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Terraform plan
           command: |
-            cd terraform
+            cd terraform_setup
             terraform plan -out tfapply 
       - persist_to_workspace:
           root: .
@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Terraform apply
           command: |
-            cd terraform
+            cd terraform_setup
             terraform apply -auto-approve tfapply
       - persist_to_workspace:
           root: .
@@ -72,7 +72,7 @@ jobs:
       - run:
           name: terraform create destroy plan
           command: |
-            cd terraform
+            cd terraform_setup
             terraform plan -destroy -out tfdestroy
       - persist_to_workspace:
           root: .
@@ -89,10 +89,10 @@ jobs:
       - run:
           name: terraform destroy
           command: |
-            cd terraform
+            cd terraform_setup
             terraform plan -destroy -out tfdestroy
-           
-           
+            
+
   build-nodejs-app:
     docker:
       - image: cimg/python:3.10
@@ -113,8 +113,9 @@ jobs:
 
       - run:
           name: Build Docker image
-          command: | 
-            docker build -t nodejs_mongodb_app .
+          command: |
+            cd django_project  
+            docker build nodejs-mongodb_app .
       - run:
           name: Push to Docker Hub
           command: |
@@ -125,7 +126,7 @@ jobs:
             docker push $DOCKER_USERNAME/$APP
             
   deploy-nodejs-app:
-     docker:
+    docker:
       - image: cimg/python:3.10
     steps:
       - checkout
@@ -148,7 +149,7 @@ jobs:
             kubectl get pods
             kubectl get services
             
-             deploy-sock-shop:
+  deploy-sock-shop:
     docker:
       - image: cimg/python:3.10
     steps:
@@ -167,7 +168,7 @@ jobs:
       - run:
           name: Deploy Docker image to EKS cluster
           command: |
-            sed -i "s|IMAGE|$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$DOCKER_USERNAME/$APP:latest|g" kubernetes_sock-shop/*yaml
+            sed -i "s|IMAGE|$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$DOCKER_USERNAME/$APP:latest|g" kubernetes/*yaml
             kubectl create namespace sock-shop
             kubectl apply -f kubernetes/
             
@@ -191,7 +192,7 @@ jobs:
           name: Deploy Docker image to EKS cluster
           command: |
             sed -i "s|IMAGE|$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$DOCKER_USERNAME/$APP:latest|g" kubernetes_sock-shop/manifests-monitoring/*yaml
-            kubectl apply -f kubernetes/manifests-monitoring/
+            kubectl apply -f kubernetes_sock-shop/manifests-monitoring/
             
 workflows:
   version: 2
@@ -212,11 +213,11 @@ workflows:
           requires: ["terraform-plan-destroy"]
       - terraform-destroy:
           requires: ["hold-destroy"]  
-      - build-nodejs-app:
+      - build-django-app:
            requires: ["terraform-apply"]
-      - deploy-nodejs-app:
-          requires: [build-nodejs-app]
+      - deploy-django-app:
+          requires: [terraform-apply, build-django-app]
       - deploy-sock-shop:
-          requires: [build-nodejs-app]
+          requires: [terraform-apply, build-django-app]
       - deploy-prometheus:
-          requires: [build-nodejs-app]
+          requires: [terraform-apply, build-django-app]
