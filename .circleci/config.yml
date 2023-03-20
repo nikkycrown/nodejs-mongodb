@@ -125,7 +125,7 @@ jobs:
             docker push $DOCKER_USERNAME/$APP
             
   deploy-nodejs-app:
-    docker:
+     docker:
       - image: cimg/python:3.10
     steps:
       - checkout
