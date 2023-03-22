@@ -27,8 +27,8 @@ spec:
         io.kompose.service: arabiana13/nodejs-mongodb_app
     spec:
       containers:
-        - image: app
-          name: app
+        - image: arabiana13/nodejs-mongodb_app
+          name: arabiana13
           ports:
             - containerPort: 80
           resources: {}
