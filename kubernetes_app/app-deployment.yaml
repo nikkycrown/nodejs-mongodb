@@ -24,7 +24,7 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/todo-default: "true"
-        io.kompose.service: app
+        io.kompose.service: arabiana13/nodejs-mongodb_app
     spec:
       containers:
         - image: app
