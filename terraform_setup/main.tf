@@ -11,7 +11,7 @@ provider "aws" {
   region     = var.region
 }
 
-# AWS EKS
+# Amazon EKS
 data "aws_availability_zones" "available" {}
 
 locals {
@@ -68,9 +68,9 @@ module "eks" {
 
   eks_managed_node_groups = {
     one = {
-      name = "node-group-1"
+      name = "nodejs1"
 
-      instance_types = ["t2.micro"]
+      instance_types = ["t2.medium"]
 
       min_size     = 1
       max_size     = 3
@@ -78,9 +78,9 @@ module "eks" {
     }
 
     two = {
-      name = "node-group-2"
+      name = "nodejs2"
 
-      instance_types = ["t2.micro"]
+      instance_types = ["t2.medium"]
 
       min_size     = 1
       max_size     = 2
